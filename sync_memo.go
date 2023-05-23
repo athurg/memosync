@@ -1,9 +1,9 @@
 package main
 
 import (
-	"discovery/internal/memos"
 	"fmt"
 	"log"
+	"memosync/internal/memos"
 )
 
 // TODO:

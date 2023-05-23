@@ -1,4 +1,4 @@
-module discovery
+module memosync
 
 go 1.20
 

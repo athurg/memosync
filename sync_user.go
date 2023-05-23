@@ -1,8 +1,8 @@
 package main
 
 import (
-	"discovery/internal/memos"
 	"log"
+	"memosync/internal/memos"
 	"strings"
 )
 

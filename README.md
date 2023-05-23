@@ -1,27 +1,22 @@
-# Memos Discovery
+# Memosync
 
-通过 *Explore* 发现身边的 [Memos](https://usememos.com)
-
-## 实现方案
-
-- 将感兴趣的 *Memos* 实例作为自己 *Memos* 实例的一个用户。
-- 周期性的检测新增的 *Memo* 并同步为给该用户
-- 通过自己的 *Memos* 实例的 *Explore* 查看感兴趣的 *Memos*。
+订阅感兴趣的 [Memos](https://usememos.com) ，并在 **Explore** 中浏览。
 
 ## 安装（Systemd）
 
-- 下载或编译二进制文件`discovery_memo`，并放到 `/usr/local/bin/` 下
-- 参考 [conf/memos_discovery.service](conf/memos_discovery.service) 创建自己的Systemd配置
-- 将Systemd配置文件放在 `/etc/systemd/system` 或 `/usr/local/lib/systemd/system/` 下
-- 执行 `sudo systemctl daemon-reload && sudo systemctl enable memos_discovery` 安装服务
+- 下载或编译二进制文件`memosync`，并放到 `/usr/local/bin/` 下
+- 在 */etc/systemd/system/* 中，参考 [memosync.service](memosync.service) 创建自己的Systemd配置文件
+- 执行 `sudo systemctl daemon-reload` 加载服务配置
+- 执行 `sudo systemctl enable memos_discovery` 设置自动启动
 - 执行 `sudo systemctl start memos_discovery` 启动服务
 
-如需查看日志，可执行 `journalctl -f -u memos_discovery`
+如需查看日志，可执行 `journalctl -f -u memosync`
 
 ## 使用方法
 
-- 首先在 *Memos* 中，以你要订阅的 *Memos* 的URL为用户名创建用户，比如: `https://usememos.com`
-- 然后运行本服务即可
+- 在自己的 *Memos* 中，创建一个新用户，用户名为要订阅的 *Memos* 的URL
+- 打开自己 *Memos* 的 **Expolre** 频道
+- Enjoy
 
 命令行参数说明：
 

@@ -1,12 +1,12 @@
 [Unit]
-Description=Memos discovery
+Description=Memos Sync
 After=network.target
 
 [Service]
 Type=simple
 User=1000
 Restart=always
-ExecStart=/usr/local/bin/memos_discovery -i https://YOUR.MEMOS.COM -k ADMIN_OPENID
+ExecStart=/usr/local/bin/memosync -i https://YOUR.MEMOS.COM -k ADMIN_OPENID
 
 [Install]
 WantedBy=multi-user.target
