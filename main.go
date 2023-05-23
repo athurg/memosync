@@ -13,7 +13,7 @@ var addr, openid, targets, interval string
 func init() {
 	flag.StringVar(&addr, "h", "https://usememos.com", "URL of YOUR Memos")
 	flag.StringVar(&openid, "k", "", "OpenID of YOUR Memos ADMIN user")
-	flag.StringVar(&targets, "targets", "", "Target Memo URLs split by comma")
+	flag.StringVar(&targets, "targets", "", "Register targets then exit")
 	flag.StringVar(&interval, "i", "10m", "Sync time interval")
 }
 
@@ -25,8 +25,18 @@ func main() {
 		return
 	}
 
-	if addr == "" || openid == "" || targets == "" {
+	if addr == "" || openid == "" {
 		flag.Usage()
+		return
+	}
+
+	// If `targets` is not empty, register targets and exit
+	if targets != "" {
+		err := registerTargets(addr, openid, strings.Split(targets, ","))
+		if err != nil {
+			log.Fatalf("fail to register targets: %s", err)
+		}
+		log.Println("Done")
 		return
 	}
 
@@ -46,14 +56,14 @@ func main() {
 }
 
 func run() {
-	users, err := registerOrGetUsers(addr, openid, strings.Split(targets, ","))
+	users, err := resetOpenIdAndFetchTargetUsers(addr, openid)
 	if err != nil {
-		log.Printf("fail to registerOrGetUsers: %s", err)
+		log.Printf("fail to resetOpenIdAndGetUsers: %s", err)
 		return
 	}
 
-	for targetUrl, user := range users {
-		err := syncTargetToUser(targetUrl, user)
+	for _, user := range users {
+		err := syncTargetToUser(user)
 		if err != nil {
 			log.Printf("fail to syncTargetToUser: %s", err)
 		}

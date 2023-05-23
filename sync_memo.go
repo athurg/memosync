@@ -16,11 +16,11 @@ var lastCheckTs int64
 const maxPerLoop int = 10
 
 // syncTargetToUser sync target memos server into user's memos
-func syncTargetToUser(targetUrl string, u memos.User) error {
-	log.Printf("Sync %s to user %d with %s", targetUrl, u.ID, u.OpenID)
+func syncTargetToUser(u memos.User) error {
+	log.Printf("Sync UserID=%d OpenID=%s for %s", u.ID, u.OpenID, u.Username)
 
 	hostSvr := memos.New(addr, u.OpenID)
-	srcSvr := memos.New(targetUrl, "")
+	srcSvr := memos.New(u.Username, "")
 
 	memos, err := srcSvr.MemoList(0, maxPerLoop)
 	if err != nil {
@@ -42,7 +42,7 @@ func syncTargetToUser(targetUrl string, u memos.User) error {
 			link := srcSvr.ResourceLink(*resource)
 			newResource, err := hostSvr.CreateExternalLinkResource(link, resource.Filename, resource.Type)
 			if err != nil {
-				return fmt.Errorf("fail to create resource for memo %v of %s: %s", memo, targetUrl, err)
+				return fmt.Errorf("fail to create resource for memo %v of %s: %s", memo, u.Username, err)
 			}
 
 			resourceIds = append(resourceIds, newResource.ID)
@@ -52,7 +52,7 @@ func syncTargetToUser(targetUrl string, u memos.User) error {
 
 		_, err = hostSvr.CreateMemo(memo.Content, memo.CreatedTs, resourceIds)
 		if err != nil {
-			return fmt.Errorf("fail to create memo %v of %s: %s", memo, targetUrl, err)
+			return fmt.Errorf("fail to create memo %v of %s: %s", memo, u.Username, err)
 		}
 	}
 

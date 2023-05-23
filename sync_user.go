@@ -7,50 +7,61 @@ import (
 )
 
 // registerOrGetUser register user in our *memos*, who's username is the targetUrl. Then fetch the user's OpenID
-func registerOrGetUsers(addr, openid string, targetUrls []string) (map[string]memos.User, error) {
+func registerTargets(addr, openid string, targetUrls []string) error {
 	svr := memos.New(addr, openid)
 
-	// First, fetch all users
-	allUsers, err := svr.UserList()
+	users, err := svr.UserList()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	// Secondly, filter user with *http* as username's prefix
-	usersForTargets := make(map[string]memos.User, len(targetUrls))
-	for _, u := range allUsers {
-		if !strings.HasPrefix(u.Username, "http") {
-			continue
-		}
-		usersForTargets[u.Username] = u
+	userMap := make(map[string]struct{}, len(users))
+	for _, u := range users {
+		userMap[u.Username] = struct{}{}
 	}
 
 	// At last, fill all user with OpenID
 	for _, targetUrl := range targetUrls {
-		// For exists user, there's no API to fetch OpenID.
-		// So just regenerate and get it.
-		if u, ok := usersForTargets[targetUrl]; ok {
-			log.Printf("Regenerate openID for %s", targetUrl)
-			u, err := svr.ResetUserOpenId(u.ID)
-			if err != nil {
-				return nil, err
-			}
-
-			// replace user with OpenID filled
-			usersForTargets[targetUrl] = *u
+		_, ok := userMap[targetUrl]
+		if ok {
+			log.Printf("Skip for %s", targetUrl)
 			continue
 		}
 
 		// For user not exists, just register a new user
-		log.Printf("Create user for %s", targetUrl)
-		u, err := svr.CreateUser(targetUrl)
+		log.Printf("Create for %s", targetUrl)
+		_, err := svr.CreateUser(targetUrl)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// resetOpenIdAndFetchTargetUsers retrive all users who's username start with *http* and reset OpenID of the user
+func resetOpenIdAndFetchTargetUsers(addr, openid string) ([]memos.User, error) {
+	svr := memos.New(addr, openid)
+
+	users, err := svr.UserList()
+	if err != nil {
+		return nil, err
+	}
+
+	targets := make([]memos.User, 0, len(users))
+	for _, u := range users {
+		if !strings.HasPrefix(u.Username, "http") {
+			continue
+		}
+
+		log.Printf("Regenerate openID for %d (%s)", u.ID, u.Username)
+		u, err := svr.ResetUserOpenId(u.ID)
 		if err != nil {
 			return nil, err
 		}
 
-		// New user already has OpenID filled
-		usersForTargets[targetUrl] = *u
+		targets = append(targets, *u)
 	}
 
-	return usersForTargets, nil
+	return targets, nil
 }
