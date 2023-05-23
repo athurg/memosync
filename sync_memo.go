@@ -15,6 +15,21 @@ var lastCheckTs int64
 
 const maxPerLoop int = 10
 
+func syncMemos() {
+	users, err := resetOpenIdAndFetchTargetUsers(addr, openid)
+	if err != nil {
+		log.Printf("fail to resetOpenIdAndGetUsers: %s", err)
+		return
+	}
+
+	for _, user := range users {
+		err := syncTargetToUser(user)
+		if err != nil {
+			log.Printf("fail to syncTargetToUser: %s", err)
+		}
+	}
+}
+
 // syncTargetToUser sync target memos server into user's memos
 func syncTargetToUser(u memos.User) error {
 	log.Printf("Sync UserID=%d OpenID=%s for %s", u.ID, u.OpenID, u.Username)

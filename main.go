@@ -40,32 +40,15 @@ func main() {
 		return
 	}
 
-	// always run once
-	run()
-
-	// run once and exit
+	// Force syncMemos once
 	if duration == 0 {
+		syncMemos()
 		return
 	}
 
 	lastCheckTs = time.Now().Unix()
 	for range time.Tick(duration) {
-		run()
+		syncMemos()
 		lastCheckTs = time.Now().Unix()
-	}
-}
-
-func run() {
-	users, err := resetOpenIdAndFetchTargetUsers(addr, openid)
-	if err != nil {
-		log.Printf("fail to resetOpenIdAndGetUsers: %s", err)
-		return
-	}
-
-	for _, user := range users {
-		err := syncTargetToUser(user)
-		if err != nil {
-			log.Printf("fail to syncTargetToUser: %s", err)
-		}
 	}
 }
