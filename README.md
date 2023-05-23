@@ -21,6 +21,15 @@
 
 - `-i 10m`: 同步周期，缺省为10m，也就是十分钟同步一次。
 
+## 安装方法（Systemd）
+
+- 下载或编译二进制文件，并放到 `/usr/local/bin/discovery_memo` 目录下
+- 下载 `conf/memo_discovery.conf` ，放到 `/etc/systemd/system` 或 `/usr/local/lib/systemd/system/` 目录下
+- 执行 `sudo systemctl daemon-reload && sudo systemctl enable memos_discovery` 安装服务
+- 执行 `sudo systemctl start memos_discovery` 启动服务
+
+如需查看日志，可执行 `journalctl -f -u memos_discovery`
+
 ## 重要提醒
 
 由于会定期性的访问感兴趣的 *Memos* 实例，因此使用前请先征求对方的同意。
