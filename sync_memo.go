@@ -11,12 +11,12 @@ import (
 //	Replace maxPerLoop with start memo.ID until the API support it
 //
 // Max sync memos count
-var lastCheckTs int64
-
 const maxPerLoop int = 10
 
+var lastCheckTs int64
+
 func syncMemos() {
-	users, err := resetOpenIdAndFetchTargetUsers(addr, openid)
+	users, err := resetAndGetUsers(addr, openid)
 	if err != nil {
 		log.Printf("fail to resetOpenIdAndGetUsers: %s", err)
 		return
@@ -32,7 +32,7 @@ func syncMemos() {
 
 // syncTargetToUser sync target memos server into user's memos
 func syncTargetToUser(u memos.User) error {
-	log.Printf("Sync UserID=%d OpenID=%s for %s", u.ID, u.OpenID, u.Username)
+	log.Printf("Sync UserID=%d for %s", u.ID, u.Username)
 
 	hostSvr := memos.New(addr, u.OpenID)
 	srcSvr := memos.New(u.Username, "")
