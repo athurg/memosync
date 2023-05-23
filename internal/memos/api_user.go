@@ -3,6 +3,7 @@ package memos
 import (
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/usememos/memos/api"
 )
 
@@ -17,6 +18,23 @@ func (c *Client) UserList() ([]User, error) {
 	}
 
 	return users, nil
+}
+
+// CreateUser create a user with username and random password
+func (c *Client) CreateUser(username string) (*User, error) {
+	param := map[string]any{
+		"role":     api.NormalUser,
+		"username": username,
+		"password": uuid.New().String(),
+	}
+
+	var user User
+	err := c.request("POST", "/api/user", nil, param, &user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
 
 // UserList reset user's password into a random UUID
