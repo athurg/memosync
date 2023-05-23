@@ -2,7 +2,15 @@
 
 订阅感兴趣的 [Memos](https://usememos.com) ，并在 **Explore** 中浏览。
 
-## 安装（Systemd）
+## 安装
+
+### Docker
+
+```
+docker run -d athurg/memosync -h http://your.memos.com -k YOU_ADMIN_OPENID
+```
+
+### Systemd
 
 - 下载或编译二进制文件`memosync`，并放到 `/usr/local/bin/` 下
 - 在 */etc/systemd/system/* 中，参考 [memosync.service](memosync.service) 创建自己的Systemd配置文件
