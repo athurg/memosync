@@ -41,6 +41,8 @@ func (c *Client) request(method, apiPath string, query url.Values, param, result
 		return fmt.Errorf("fail to create http.Request: %s", err)
 	}
 
+	req.Header.Set("User-Agent", "Memos Discovery")
+
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("fail to do http.Request: %s", err)
