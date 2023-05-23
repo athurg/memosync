@@ -7,7 +7,9 @@ import (
 	"github.com/usememos/memos/api"
 )
 
-type User api.User
+type (
+	User = api.User
+)
 
 // UserList fetch user list from memos server
 func (c *Client) UserList() ([]User, error) {

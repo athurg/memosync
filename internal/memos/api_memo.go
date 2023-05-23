@@ -7,8 +7,10 @@ import (
 	"github.com/usememos/memos/api"
 )
 
-type Memo api.Memo
-type MemoCreate api.MemoCreate
+type (
+	Memo       = api.Memo
+	MemoCreate = api.MemoCreate
+)
 
 // MemoList fetch memo list from memos server
 func (c *Client) MemoList(offset, limit int) ([]Memo, error) {
