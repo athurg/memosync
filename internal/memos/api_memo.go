@@ -27,11 +27,12 @@ func (c *Client) MemoList(offset, limit int) ([]Memo, error) {
 }
 
 // CreateMemo create memo from exists one
-func (c *Client) CreateMemo(content string, createdTs int64) (*Memo, error) {
+func (c *Client) CreateMemo(content string, createdTs int64, resourceIds []int) (*Memo, error) {
 	param := MemoCreate{
-		Content:    content,
-		CreatedTs:  &createdTs,
-		Visibility: api.Protected,
+		Content:        content,
+		CreatedTs:      &createdTs,
+		Visibility:     api.Protected,
+		ResourceIDList: resourceIds,
 	}
 
 	var result Memo
