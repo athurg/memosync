@@ -30,9 +30,11 @@ func main() {
 		return
 	}
 
-	// run once
+	// always run once
+	run()
+
+	// run once and exit
 	if duration == 0 {
-		run()
 		return
 	}
 
