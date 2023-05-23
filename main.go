@@ -14,7 +14,7 @@ func init() {
 	flag.StringVar(&addr, "h", "https://usememos.com", "URL of YOUR Memos")
 	flag.StringVar(&openid, "k", "", "OpenID of YOUR Memos ADMIN user")
 	flag.StringVar(&targets, "targets", "", "Target Memo URLs split by comma")
-	flag.StringVar(&interval, "i", "1m", "Sync time interval")
+	flag.StringVar(&interval, "i", "10m", "Sync time interval")
 }
 
 func main() {
