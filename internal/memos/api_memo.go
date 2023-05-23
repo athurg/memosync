@@ -8,6 +8,7 @@ import (
 )
 
 type Memo api.Memo
+type MemoCreate api.MemoCreate
 
 // MemoList fetch memo list from memos server
 func (c *Client) MemoList(offset, limit int) ([]Memo, error) {
@@ -23,4 +24,21 @@ func (c *Client) MemoList(offset, limit int) ([]Memo, error) {
 	}
 
 	return memos, nil
+}
+
+// CreateMemo create memo from exists one
+func (c *Client) CreateMemo(content string, createdTs int64) (*Memo, error) {
+	param := MemoCreate{
+		Content:    content,
+		CreatedTs:  &createdTs,
+		Visibility: api.Protected,
+	}
+
+	var result Memo
+	err := c.request("POST", "/api/memo", nil, param, &result)
+	if err != nil {
+		return nil, err
+	}
+
+	return &result, nil
 }
