@@ -71,7 +71,7 @@ func syncTargetToUser(u memos.User) error {
 		}
 	}
 
-	log.Printf("Total %d memos synced %d with %d resources", len(memos), len(memos)-skipCount, resourceCount)
+	log.Printf("Total %d memos, create %d memos with %d resources", len(memos), len(memos)-skipCount, resourceCount)
 
 	return nil
 }
