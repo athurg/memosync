@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"log"
 	"memosync/internal/memos"
+	"net/url"
+	"strconv"
+	"strings"
 )
 
 // TODO:
@@ -32,19 +35,44 @@ func syncMemos() {
 
 // syncTargetToUser sync target memos server into user's memos
 func syncTargetToUser(u memos.User) error {
-	log.Printf("Sync UserID=%d for %s", u.ID, u.Username)
+	srcUrl, err := url.Parse(u.Username)
+	if err != nil {
+		return fmt.Errorf("fail to url.Parse %s: %s", u.Username, err)
+	}
 
-	hostSvr := memos.New(addr, u.OpenID)
-	srcSvr := memos.New(u.Username, "")
+	// only one user
+	var srcUserID int
+	if srcUrl.Path != "/" && srcUrl.Path != "" {
+		if !strings.HasPrefix(srcUrl.Path, "/u/") {
+			return fmt.Errorf("invalid url %s: path should empty or start with /u/", u.Username)
+		}
+		userIDStr := strings.TrimPrefix(srcUrl.Path, "/u/")
+		userID, err := strconv.Atoi(userIDStr)
+		if err != nil {
+			return fmt.Errorf("fail to parse userid from %s:%s", userIDStr, err)
+		}
+		srcUserID = userID
+	}
 
-	memos, err := srcSvr.MemoList(0, maxPerLoop)
+	srcAddr := srcUrl.Scheme + "://" + srcUrl.Host
+	srcSvr := memos.New(srcAddr, "")
+
+	var allMemos []memos.Memo
+	if srcUserID > 0 {
+		log.Printf("Sync UserID=%d for user=%d of %s", u.ID, srcUserID, srcAddr)
+		allMemos, err = srcSvr.UserMemoList(srcUserID, 0, maxPerLoop)
+	} else {
+		log.Printf("Sync UserID=%d for all user of %s", u.ID, srcAddr)
+		allMemos, err = srcSvr.MemoList(0, maxPerLoop)
+	}
 	if err != nil {
 		return fmt.Errorf("fail to fetch memos: %s", err)
 	}
 
 	var skipCount, resourceCount int
 
-	for _, memo := range memos {
+	hostSvr := memos.New(addr, u.OpenID)
+	for _, memo := range allMemos {
 		// Skip memos already synced
 		if memo.CreatedTs < lastCheckTs {
 			skipCount += 1
@@ -71,7 +99,7 @@ func syncTargetToUser(u memos.User) error {
 		}
 	}
 
-	log.Printf("Total %d memos, create %d memos with %d resources", len(memos), len(memos)-skipCount, resourceCount)
+	log.Printf("Total %d memos, create %d memos with %d resources", len(allMemos), len(allMemos)-skipCount, resourceCount)
 
 	return nil
 }
