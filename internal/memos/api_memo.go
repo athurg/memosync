@@ -8,8 +8,8 @@ import (
 )
 
 type (
-	Memo       = api.Memo
-	MemoCreate = api.MemoCreate
+	Memo       = api.MemoResponse
+	MemoCreate = api.CreateMemoRequest
 )
 
 // MemoList fetch memo list from memos server
@@ -19,13 +19,15 @@ func (c *Client) MemoList(offset, limit int) ([]Memo, error) {
 		"limit":  {strconv.Itoa(limit)},
 	}
 
-	memos := []Memo{}
-	err := c.request("GET", "/api/memo/all", query, nil, &memos)
+	var respInfo struct {
+		Data []Memo
+	}
+	err := c.request("GET", "/api/memo/all", query, nil, &respInfo)
 	if err != nil {
 		return nil, err
 	}
 
-	return memos, nil
+	return respInfo.Data, nil
 }
 
 // CreateMemo create memo from exists one
@@ -37,11 +39,13 @@ func (c *Client) CreateMemo(content string, createdTs int64, resourceIds []int) 
 		ResourceIDList: resourceIds,
 	}
 
-	var result Memo
+	var result struct {
+		Data Memo
+	}
 	err := c.request("POST", "/api/memo", nil, param, &result)
 	if err != nil {
 		return nil, err
 	}
 
-	return &result, nil
+	return &result.Data, nil
 }

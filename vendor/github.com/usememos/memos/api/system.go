@@ -10,8 +10,6 @@ type SystemStatus struct {
 	// System settings
 	// Allow sign up.
 	AllowSignUp bool `json:"allowSignUp"`
-	// Ignore upgrade
-	IgnoreUpgrade bool `json:"ignoreUpgrade"`
 	// Disable public memos.
 	DisablePublicMemos bool `json:"disablePublicMemos"`
 	// Max upload size.
@@ -24,6 +22,8 @@ type SystemStatus struct {
 	CustomizedProfile CustomizedProfile `json:"customizedProfile"`
 	// Storage service ID.
 	StorageServiceID int `json:"storageServiceId"`
-	// Local storage path
+	// Local storage path.
 	LocalStoragePath string `json:"localStoragePath"`
+	// Memo display with updated timestamp.
+	MemoDisplayWithUpdatedTs bool `json:"memoDisplayWithUpdatedTs"`
 }

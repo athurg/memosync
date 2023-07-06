@@ -2,11 +2,13 @@ module memosync
 
 go 1.20
 
-require github.com/usememos/memos v0.13.0
+require (
+	github.com/google/uuid v1.3.0
+	github.com/usememos/memos v0.13.2
+)
 
 require (
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
