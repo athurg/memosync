@@ -17,6 +17,10 @@ func resetAndGetUsers(addr, openid string) ([]memos.User, error) {
 
 	targets := make([]memos.User, 0, len(users))
 	for _, u := range users {
+		if u.RowStatus == "ARCHIVED" {
+			continue
+		}
+
 		if !strings.HasPrefix(u.Username, "http") {
 			continue
 		}
