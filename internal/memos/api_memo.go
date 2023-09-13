@@ -8,8 +8,8 @@ import (
 )
 
 type (
-	Memo       = api.MemoResponse
-	MemoCreate = api.CreateMemoRequest
+	Memo       = api.Memo
+	MemoCreate = api.MemoCreate
 )
 
 // MemoList fetch memo list from memos server
@@ -19,34 +19,13 @@ func (c *Client) MemoList(offset, limit int) ([]Memo, error) {
 		"limit":  {strconv.Itoa(limit)},
 	}
 
-	var respInfo struct {
-		Data []Memo
-	}
-	err := c.request("GET", "/api/memo/all", query, nil, &respInfo)
+	memos := []Memo{}
+	err := c.request("GET", "/api/memo/all", query, nil, &memos)
 	if err != nil {
 		return nil, err
 	}
 
-	return respInfo.Data, nil
-}
-
-// UserMemoList fetch memo list of specified user from memos server
-func (c *Client) UserMemoList(userId, offset, limit int) ([]Memo, error) {
-	query := url.Values{
-		"creatorId": {strconv.Itoa(userId)},
-		"offset":    {strconv.Itoa(offset)},
-		"limit":     {strconv.Itoa(limit)},
-	}
-
-	var respInfo struct {
-		Data []Memo
-	}
-	err := c.request("GET", "/api/memo", query, nil, &respInfo)
-	if err != nil {
-		return nil, err
-	}
-
-	return respInfo.Data, nil
+	return memos, nil
 }
 
 // CreateMemo create memo from exists one
@@ -58,13 +37,11 @@ func (c *Client) CreateMemo(content string, createdTs int64, resourceIds []int) 
 		ResourceIDList: resourceIds,
 	}
 
-	var result struct {
-		Data Memo
-	}
+	var result Memo
 	err := c.request("POST", "/api/memo", nil, param, &result)
 	if err != nil {
 		return nil, err
 	}
 
-	return &result.Data, nil
+	return &result, nil
 }
