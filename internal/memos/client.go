@@ -54,21 +54,23 @@ func (c *Client) request(method, apiPath string, query url.Values, param, result
 		return fmt.Errorf("fail to read http.Response: %s", err)
 	}
 
-	var respInfo struct {
+	if resp.StatusCode == http.StatusOK {
+		err := json.Unmarshal(buff, result)
+		if err != nil {
+			return fmt.Errorf("fail to unmarshal http.Response %s: %s", string(buff), err)
+		}
+		return nil
+	}
+
+	var errInfo struct {
 		Error   string
 		Message string
-		Data    any
 	}
-	respInfo.Data = result
 
-	err = json.Unmarshal(buff, &respInfo)
+	err = json.Unmarshal(buff, &errInfo)
 	if err != nil {
 		return fmt.Errorf("fail to unmarshal http.Response %s: %s", string(buff), err)
 	}
 
-	if respInfo.Error != "" {
-		return errors.New(respInfo.Error)
-	}
-
-	return nil
+	return errors.New(errInfo.Error)
 }

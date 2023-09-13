@@ -23,7 +23,7 @@ func (c *Client) CreateExternalLinkResource(link, filename, mime string) (*Resou
 	}
 
 	var result Resource
-	err := c.request("POST", "/api/resource", nil, param, &result)
+	err := c.request("POST", "/api/v1/resource", nil, param, &result)
 	if err != nil {
 		return nil, err
 	}

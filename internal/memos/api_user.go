@@ -14,7 +14,7 @@ type (
 // UserList fetch user list from memos server
 func (c *Client) UserList() ([]User, error) {
 	users := []User{}
-	err := c.request("GET", "/api/user", nil, nil, &users)
+	err := c.request("GET", "/api/v1/user", nil, nil, &users)
 	if err != nil {
 		return nil, err
 	}
@@ -27,11 +27,12 @@ func (c *Client) CreateUser(username string) (*User, error) {
 	param := map[string]any{
 		"role":     api.NormalUser,
 		"username": username,
+		"nickname": username,
 		"password": uuid.New().String(),
 	}
 
 	var user User
-	err := c.request("POST", "/api/user", nil, param, &user)
+	err := c.request("POST", "/api/v1/user", nil, param, &user)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +45,31 @@ func (c *Client) ResetUserOpenId(userId int) (*User, error) {
 	param := map[string]any{"resetOpenId": true}
 
 	var user User
-	err := c.request("PATCH", fmt.Sprintf("/api/user/%d", userId), nil, param, &user)
+	err := c.request("PATCH", fmt.Sprintf("/api/v1/user/%d", userId), nil, param, &user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+// FetchUserInfo fetch user info
+func (c *Client) FetchUserInfo(userId int) (*User, error) {
+	var user User
+	err := c.request("GET", fmt.Sprintf("/api/v1/user/%d", userId), nil, nil, &user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+// FetchUserInfo fetch user info
+func (c *Client) UpdateUserNickname(userId int, nickname string) (*User, error) {
+	param := map[string]any{"nickname": nickname}
+
+	var user User
+	err := c.request("PATCH", fmt.Sprintf("/api/v1/user/%d", userId), nil, param, &user)
 	if err != nil {
 		return nil, err
 	}
