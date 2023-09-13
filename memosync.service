@@ -6,7 +6,7 @@ After=network.target
 Type=simple
 User=1000
 Restart=always
-ExecStart=/usr/local/bin/memosync -i https://YOUR.MEMOS.COM -k ADMIN_OPENID
+ExecStart=/usr/local/bin/memosync -h https://YOUR.MEMOS.COM -k ADMIN_OPENID
 
 [Install]
 WantedBy=multi-user.target
