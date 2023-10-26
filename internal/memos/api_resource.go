@@ -3,11 +3,15 @@ package memos
 import (
 	"fmt"
 	"net/url"
-
-	"github.com/usememos/memos/api"
 )
 
-type Resource = api.Resource
+type Resource struct {
+	ID           int32  `json:"id"`
+	PublicID     string `json:"publicId"`
+	Filename     string `json:"filename"`
+	Type         string `json:"type"`
+	ExternalLink string `json:"externalLink"`
+}
 
 // ResourceLink generate a external link for specified resource
 func (c *Client) ResourceLink(r Resource) string {
@@ -16,7 +20,7 @@ func (c *Client) ResourceLink(r Resource) string {
 
 // CreateExternalLinkResource create resource with external link
 func (c *Client) CreateExternalLinkResource(link, filename, mime string) (*Resource, error) {
-	param := api.ResourceCreate{
+	param := Resource{
 		ExternalLink: link,
 		Filename:     filename,
 		Type:         mime,

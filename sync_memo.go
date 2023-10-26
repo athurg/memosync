@@ -54,7 +54,7 @@ func syncTargetToUser(u memos.User) error {
 
 	// Refresh user's nickname
 	{
-		userInfo, err := srcSvr.FetchUserInfo(srcUserID)
+		userInfo, err := srcSvr.FetchUserInfo(int32(srcUserID))
 		if err != nil {
 			return fmt.Errorf("fail to FetchUserInfo for user=%d of %s: %s", srcUserID, srcUrl.Host, err)
 		}
@@ -82,9 +82,9 @@ func syncTargetToUser(u memos.User) error {
 		}
 
 		// Create resources first
-		resourceIds := make([]int, 0, len(memo.ResourceList))
+		resourceIds := make([]int32, 0, len(memo.ResourceList))
 		for _, resource := range memo.ResourceList {
-			link := srcSvr.ResourceLink(*resource)
+			link := srcSvr.ResourceLink(resource)
 			newResource, err := hostSvr.CreateExternalLinkResource(link, resource.Filename, resource.Type)
 			if err != nil {
 				return fmt.Errorf("fail to create resource for memo %v of %s: %s", memo, u.Username, err)
@@ -95,7 +95,7 @@ func syncTargetToUser(u memos.User) error {
 
 		resourceCount += len(resourceIds)
 
-		_, err = hostSvr.CreateMemo(memo.Content, memo.CreatedTs, resourceIds)
+		err = hostSvr.CreateMemo(memo.Content, memo.CreatedTs, resourceIds)
 		if err != nil {
 			return fmt.Errorf("fail to create memo %v of %s: %s", memo, u.Username, err)
 		}

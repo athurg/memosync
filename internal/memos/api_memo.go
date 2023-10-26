@@ -3,14 +3,15 @@ package memos
 import (
 	"net/url"
 	"strconv"
-
-	"github.com/usememos/memos/api"
 )
 
-type (
-	Memo       = api.MemoResponse
-	MemoCreate = api.CreateMemoRequest
-)
+type Memo struct {
+	Content        string     `json:"content,omitempty"`
+	CreatedTs      int64      `json:"createdTs,omitempty"`
+	Visibility     string     `json:"visibility,omitempty"`
+	ResourceIDList []int32    `json:"resourceIdList,omitempty"`
+	ResourceList   []Resource `json:"resourceList,omitempty"`
+}
 
 // MemoList fetch memo list from memos server
 func (c *Client) MemoList(offset, limit int) ([]Memo, error) {
@@ -48,21 +49,18 @@ func (c *Client) UserMemoList(userId, offset, limit int) ([]Memo, error) {
 }
 
 // CreateMemo create memo from exists one
-func (c *Client) CreateMemo(content string, createdTs int64, resourceIds []int) (*Memo, error) {
-	param := MemoCreate{
+func (c *Client) CreateMemo(content string, createdTs int64, resourceIds []int32) error {
+	param := Memo{
 		Content:        content,
-		CreatedTs:      &createdTs,
-		Visibility:     api.Public,
+		CreatedTs:      createdTs,
+		Visibility:     "PUBLIC",
 		ResourceIDList: resourceIds,
 	}
 
-	var result struct {
-		Data Memo
-	}
-	err := c.request("POST", "/api/v1/memo", nil, param, &result)
+	err := c.request("POST", "/api/v1/memo", nil, param, nil)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &result.Data, nil
+	return nil
 }

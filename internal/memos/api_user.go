@@ -4,12 +4,15 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/usememos/memos/api"
 )
 
-type (
-	User = api.User
-)
+type User struct {
+	ID        int32  `json:"id"`
+	Username  string `json:"username"`
+	Nickname  string `json:"nickname"`
+	OpenID    string `json:"openId"`
+	RowStatus string `json:"rowStatus"`
+}
 
 // UserList fetch user list from memos server
 func (c *Client) UserList() ([]User, error) {
@@ -25,7 +28,7 @@ func (c *Client) UserList() ([]User, error) {
 // CreateUser create a user with username and random password
 func (c *Client) CreateUser(username string) (*User, error) {
 	param := map[string]any{
-		"role":     api.NormalUser,
+		"role":     "USER",
 		"username": username,
 		"nickname": username,
 		"password": uuid.New().String(),
@@ -41,7 +44,7 @@ func (c *Client) CreateUser(username string) (*User, error) {
 }
 
 // UserList reset user's password into a random UUID
-func (c *Client) ResetUserOpenId(userId int) (*User, error) {
+func (c *Client) ResetUserOpenId(userId int32) (*User, error) {
 	param := map[string]any{"resetOpenId": true}
 
 	var user User
@@ -54,7 +57,7 @@ func (c *Client) ResetUserOpenId(userId int) (*User, error) {
 }
 
 // FetchUserInfo fetch user info
-func (c *Client) FetchUserInfo(userId int) (*User, error) {
+func (c *Client) FetchUserInfo(userId int32) (*User, error) {
 	var user User
 	err := c.request("GET", fmt.Sprintf("/api/v1/user/%d", userId), nil, nil, &user)
 	if err != nil {
@@ -65,7 +68,7 @@ func (c *Client) FetchUserInfo(userId int) (*User, error) {
 }
 
 // FetchUserInfo fetch user info
-func (c *Client) UpdateUserNickname(userId int, nickname string) (*User, error) {
+func (c *Client) UpdateUserNickname(userId int32, nickname string) (*User, error) {
 	param := map[string]any{"nickname": nickname}
 
 	var user User
