@@ -10,7 +10,6 @@ type User struct {
 	ID        int32  `json:"id"`
 	Username  string `json:"username"`
 	Nickname  string `json:"nickname"`
-	OpenID    string `json:"openId"`
 	RowStatus string `json:"rowStatus"`
 }
 
@@ -36,19 +35,6 @@ func (c *Client) CreateUser(username string) (*User, error) {
 
 	var user User
 	err := c.request("POST", "/api/v1/user", nil, param, &user)
-	if err != nil {
-		return nil, err
-	}
-
-	return &user, nil
-}
-
-// UserList reset user's password into a random UUID
-func (c *Client) ResetUserOpenId(userId int32) (*User, error) {
-	param := map[string]any{"resetOpenId": true}
-
-	var user User
-	err := c.request("PATCH", fmt.Sprintf("/api/v1/user/%d", userId), nil, param, &user)
 	if err != nil {
 		return nil, err
 	}

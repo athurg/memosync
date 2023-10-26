@@ -7,11 +7,11 @@ import (
 )
 
 // All flags defined here
-var addr, openid, interval string
+var addr, password, interval string
 
 func init() {
 	flag.StringVar(&addr, "h", "https://usememos.com", "URL of YOUR Memos")
-	flag.StringVar(&openid, "k", "", "OpenID of YOUR Memos ADMIN user")
+	flag.StringVar(&password, "p", "secret", "Share password of external users")
 	flag.StringVar(&interval, "i", "10m", "Sync time interval")
 }
 
@@ -23,7 +23,7 @@ func main() {
 		return
 	}
 
-	if addr == "" || openid == "" {
+	if addr == "" || password == "" {
 		flag.Usage()
 		return
 	}

@@ -7,7 +7,7 @@
 ### Docker
 
 ```
-docker run -d athurg/memosync -h http://your.memos.com -k YOU_ADMIN_OPENID
+docker run -d athurg/memosync -h http://your.memos.com -p SHARED_PASSWORD
 ```
 
 ### Systemd
@@ -22,14 +22,14 @@ docker run -d athurg/memosync -h http://your.memos.com -k YOU_ADMIN_OPENID
 
 ## 使用方法
 
-- 在自己的 *Memos* 中，创建一个新用户，用户名为要订阅的 *Memos* 的URL
+- 在自己的 *Memos* 中，创建一个新用户，用户名为要订阅的 *Memos* 的URL，密码为`SHARED_PASSWORD`
 - 打开自己 *Memos* 的 **Expolre** 频道
 - Enjoy
 
 命令行参数说明：
 
 - `-h http://my.usememos.com`: 必须，自己 *Memos* 实例的地址
-- `-k xxx`: 必须，自己 *Memos* 实例的管理员OpenID
+- `-p xxx`: 必须，所有订阅类型的 *Memos* 用户共享的密码
 - `-i 30m`: 可选，检查的周期，默认为十分钟
 
 ## 重要提醒

@@ -19,16 +19,20 @@ const maxPerLoop int = 10
 var lastCheckTs int64
 
 func syncMemos() {
-	users, err := resetAndGetUsers(addr, openid)
+	users, err := memos.New(addr).UserList()
 	if err != nil {
-		log.Printf("fail to resetOpenIdAndGetUsers: %s", err)
-		return
+		log.Fatal("Fail to get user list")
 	}
 
 	for _, user := range users {
-		err := syncTargetToUser(user)
+		if user.RowStatus == "ARCHIVED" || !strings.HasPrefix(user.Username, "http") {
+			continue
+		}
+
+		err = syncTargetToUser(user)
 		if err != nil {
 			log.Printf("fail to syncTargetToUser: %s", err)
+			return
 		}
 	}
 }
@@ -49,8 +53,11 @@ func syncTargetToUser(u memos.User) error {
 		return fmt.Errorf("fail to parse userid from %s:%s", userIDStr, err)
 	}
 
-	hostSvr := memos.New(addr, u.OpenID)
-	srcSvr := memos.New(srcUrl.Scheme+"://"+srcUrl.Host, "")
+	hostSvr, err := memos.NewWithUser(addr, u.Username, password)
+	if err != nil {
+		return fmt.Errorf("fail to create hostSvr: %s", err)
+	}
+	srcSvr := memos.New(srcUrl.Scheme + "://" + srcUrl.Host)
 
 	// Refresh user's nickname
 	{
