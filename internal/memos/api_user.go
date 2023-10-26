@@ -2,8 +2,6 @@ package memos
 
 import (
 	"fmt"
-
-	"github.com/google/uuid"
 )
 
 type User struct {
@@ -22,24 +20,6 @@ func (c *Client) UserList() ([]User, error) {
 	}
 
 	return users, nil
-}
-
-// CreateUser create a user with username and random password
-func (c *Client) CreateUser(username string) (*User, error) {
-	param := map[string]any{
-		"role":     "USER",
-		"username": username,
-		"nickname": username,
-		"password": uuid.New().String(),
-	}
-
-	var user User
-	err := c.request("POST", "/api/v1/user", nil, param, &user)
-	if err != nil {
-		return nil, err
-	}
-
-	return &user, nil
 }
 
 // FetchUserInfo fetch user info
